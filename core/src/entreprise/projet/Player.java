@@ -14,6 +14,7 @@
         BitmapFont font = new BitmapFont();
         float driftFactor = 0.75f;
         Color tint;
+        private int points;
 
         public Player(Map map, float startX, float startY, String texturePath, Color tint) {
             img = new Texture("voituretest.png");
@@ -27,6 +28,8 @@
             rotationSpeed = 5;
             speed = 0;
             speedText = "Speed: " + speed;
+
+
         }
 
         public void update(float delta) {
@@ -48,6 +51,11 @@
             float newY = y + speedY * delta;
 
             if (map.isWalkable((int) newX, (int) newY)) {
+                if(map.isLapComplete(x, y, newX, newY) == 1) {
+                    points++;
+                } else if (map.isLapComplete(x, y, newX, newY) == -1) {
+                    points--;
+                }
                 x = newX;
                 y = newY;
             } else {
@@ -55,6 +63,10 @@
                 isMoving = false;
             }
             speedText = "Speed: " + speed;
+        }
+
+        public int getPoints() {
+            return points;
         }
 
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
@@ -16,6 +17,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	Texture background;
 	Texture backgroundTexture;
 	Map map;
+	BitmapFont font;
 
 
 
@@ -23,7 +25,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		public void create() {
 
 		batch = new SpriteBatch();
-
+		font = new BitmapFont();
+		font.setColor(Color.WHITE);
 		map = new Map("map.png");
 		car1 = new Player(map,550,950, "voituretest.png",Color.WHITE);
 		car2 = new Player(map,550,925, "voituretest.png",Color.YELLOW);
@@ -44,15 +47,24 @@ public class MyGdxGame extends ApplicationAdapter {
 			car1.draw(batch);
 			car2.update(Gdx.graphics.getDeltaTime());
 			car2.draw(batch);
+
+
+			// Display the points on the screen
+			font.draw(batch, "Car 1 Points: " + car1.getPoints(), 10, 460); // Show Car 1 points
+			font.draw(batch, "Car 2 Points: " + car2.getPoints(), 10, 440); // Show Car 2 points
+
 			batch.end();
 	}
 
 	@Override
 	public void dispose() {
 		batch.dispose();
+		font.dispose();
 		car1.img.dispose();
 		car2.img.dispose();
 		backgroundTexture.dispose();
 		map.dispose();
 	}
+
+
 }

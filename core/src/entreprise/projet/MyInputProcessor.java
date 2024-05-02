@@ -42,7 +42,7 @@ public class MyInputProcessor implements InputProcessor {
             case Input.Keys.DOWN:
                 car1.setDownPressed(true);
                 break;
-            case Input.Keys.SHIFT_LEFT:
+            case Input.Keys.CONTROL_RIGHT:
                 car1.startDrift();
                 break;
             case Input.Keys.A:
@@ -57,7 +57,7 @@ public class MyInputProcessor implements InputProcessor {
             case Input.Keys.S:
                 car2.setDownPressed(true);
                 break;
-            case Input.Keys.CONTROL_RIGHT:
+            case Input.Keys.SHIFT_LEFT:
                 car2.startDrift();
                 break;
         }
@@ -79,7 +79,7 @@ public class MyInputProcessor implements InputProcessor {
             case Input.Keys.DOWN:
                 car1.setDownPressed(false);
                 break;
-            case Input.Keys.SHIFT_LEFT:
+            case Input.Keys.CONTROL_RIGHT:
                 car1.stopDrift();
                 break;
             case Input.Keys.A:
@@ -94,7 +94,7 @@ public class MyInputProcessor implements InputProcessor {
             case Input.Keys.S:
                 car2.setDownPressed(false);
                 break;
-            case Input.Keys.CONTROL_RIGHT:
+            case Input.Keys.SHIFT_LEFT:
                 car2.stopDrift();
                 break;
 

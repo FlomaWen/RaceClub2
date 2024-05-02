@@ -61,6 +61,20 @@ public class Map {
         return color.r == red && color.g == green && color.b == blue && color.a == 1;
     }
 
+    private final static float STARTX = 495f;
+    private final static float STARTY = 897f;
+    private final static float LAP_HEIGHT = 100f;
+    public int isLapComplete(float x0, float y0, float x, float y) {
+        float avgy = (y+y0)/2f;
+        if(STARTY < avgy && avgy < STARTY+LAP_HEIGHT && STARTX-x > 0 && STARTX-x0 <=0) {
+            return 1;
+        } else if (STARTY < avgy && avgy < STARTY+LAP_HEIGHT && STARTX-x < 0 && STARTX-x0 >=0) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
 
     public boolean isWalkable(int x, int y) {
         return x >= 0 && y >= 0 && x < walkable.length && y < walkable[0].length && walkable[x][pixmap.getHeight() - 1 - y];
@@ -76,4 +90,6 @@ public class Map {
     public void dispose() {
         pixmap.dispose();
     }
+
+
 }
