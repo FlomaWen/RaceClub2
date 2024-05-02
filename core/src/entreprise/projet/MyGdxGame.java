@@ -8,11 +8,24 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import entreprise.projet.entities.Map;
+import entreprise.projet.entities.Player;
+import entreprise.projet.input.KeyboardController;
+import entreprise.projet.input.MyInputProcessor;
 
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	Player car1;
+	static final Color[] carColors = new Color[]{
+			Color.WHITE,
+			Color.YELLOW
+	};
+	static final int[][] carInputs = new int[][]{
+			{Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.CONTROL_RIGHT},
+			{Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.CONTROL_RIGHT}
+	};
+
+	Player [] cars;
 	Player car2;
 	Texture background;
 	Texture backgroundTexture;
@@ -28,8 +41,16 @@ public class MyGdxGame extends ApplicationAdapter {
 		font = new BitmapFont();
 		font.setColor(Color.WHITE);
 		map = new Map("map.png");
-		car1 = new Player(map,550,950, "voituretest.png",Color.WHITE);
-		car2 = new Player(map,550,925, "voituretest.png",Color.YELLOW);
+		cars = new Player[carColors.length];
+		for(int i =0; i<cars.length; i++) {
+			cars[i] = new Player(
+					map,
+					new KeyboardController(carInputs[i]),
+					550,925+25*i,
+					"voituretest.png",
+					carColors[i]
+			);
+		}
 
 		backgroundTexture = new Texture("map.png");
 		Gdx.input.setInputProcessor(new MyInputProcessor(car1,car2,map));
@@ -38,16 +59,16 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		@Override
 		public void render() {
+			float delta = Gdx.graphics.getDeltaTime();
 			ScreenUtils.clear(1, 0, 0, 1);
 			batch.setColor(Color.WHITE);
 			batch.begin();
 
 			batch.draw(backgroundTexture, 0, 0);
-			car1.update(Gdx.graphics.getDeltaTime());
-			car1.draw(batch);
-			car2.update(Gdx.graphics.getDeltaTime());
-			car2.draw(batch);
-
+			for(Player c : cars) {
+				c.update(delta);
+				c.draw(batch);
+			}
 
 			// Display the points on the screen
 			font.draw(batch, "Car 1 Points: " + car1.getPoints(), 10, 460); // Show Car 1 points

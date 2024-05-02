@@ -1,35 +1,38 @@
-    package entreprise.projet;
+    package entreprise.projet.entities;
 
     import com.badlogic.gdx.graphics.Texture;
     import com.badlogic.gdx.graphics.g2d.BitmapFont;
     import com.badlogic.gdx.graphics.g2d.SpriteBatch;
     import com.badlogic.gdx.graphics.Color;
+    import entreprise.projet.input.InputController;
+
+    import java.util.ArrayList;
+    import java.util.List;
 
     public class Player {
-        Texture img;
-        float x, y, speedX, speedY, rotation, acceleration, maxSpeed, rotationSpeed, speed;
-        Map map;
-        boolean upPressed = false, downPressed = false, leftPressed = false, rightPressed = false,isMoving,isDrifting;
-        String speedText;
-        BitmapFont font = new BitmapFont();
-        float driftFactor = 0.75f;
-        Color tint;
+        public Texture img;
+        private float x, y, speedX, speedY, rotation, acceleration, maxSpeed, rotationSpeed, speed;
+        private Map map;
+        //private boolean upPressed = false, downPressed = false, leftPressed = false, rightPressed = false,isMoving,isDrifting;
+        private boolean isMoving = false;
+        private InputController inputCtrl;
+        private BitmapFont font = new BitmapFont();
+        private float driftFactor = 0.75f;
+        private Color tint;
         private int points;
 
-        public Player(Map map, float startX, float startY, String texturePath, Color tint) {
+        public Player(Map map, InputController inputCtrl, float startX, float startY, String texturePath, Color tint) {
             img = new Texture("voituretest.png");
             x = startX;
             y = startY;
             rotation = 270;
+            this.inputCtrl = inputCtrl;
             this.map = map;
             this.tint = tint;
             maxSpeed = 300;
             acceleration = maxSpeed / 1.5f;
             rotationSpeed = 5;
             speed = 0;
-            speedText = "Speed: " + speed;
-
-
         }
 
         public void update(float delta) {
@@ -39,7 +42,7 @@
             float driftSpeedX = speed * (float) Math.cos(rad - Math.PI / 2);
             float driftSpeedY = speed * (float) Math.sin(rad - Math.PI / 2);
 
-            if (isDrifting) {
+            if (inputCtrl.isDriftPressed()) {
                 speedX = speedX * driftFactor + driftSpeedX * (1 - driftFactor);
                 speedY = speedY * driftFactor + driftSpeedY * (1 - driftFactor);
             } else {
@@ -58,11 +61,13 @@
                 }
                 x = newX;
                 y = newY;
+
+                notifyObservers(x, y);
             } else {
                 speed = 0;
                 isMoving = false;
             }
-            speedText = "Speed: " + speed;
+
         }
 
         public int getPoints() {
@@ -82,10 +87,10 @@
 
         private void updateSpeed(float delta) {
             float dx = 0, dy = 0;
-            if (leftPressed) dx -= 1;
-            if (rightPressed) dx += 1;
-            if (upPressed) dy += 1;
-            if (downPressed) dy -= 1;
+            if (inputCtrl.isLeftPressed()) dx -= 1;
+            if (inputCtrl.isRightPressed()) dx += 1;
+            if (inputCtrl.isUpPressed()) dy += 1;
+            if (inputCtrl.isDownPressed()) dy -= 1;
 
             float length = (float) Math.sqrt(dx * dx + dy * dy);
             if (length > 0) {
@@ -110,11 +115,11 @@
             if (speed > 0) {
                 float targetRotation = (float) Math.toDegrees(Math.atan2(speedY, speedX)) + 90;
 
-                if (isDrifting) {
+                if (inputCtrl.isDriftPressed()) {
                     rotationSpeed = 15;
-                    if (leftPressed) {
+                    if (inputCtrl.isLeftPressed()) {
                         targetRotation -= 45;
-                    } else if (rightPressed) {
+                    } else if (inputCtrl.isRightPressed()) {
                         targetRotation += 45;
                     }
                 } else {
@@ -142,44 +147,30 @@
             return current + change;
         }
 
-
-
-
-
-        public void setLeftPressed(boolean pressed) {
-            this.leftPressed = pressed;
-        }
-
-        public void setRightPressed(boolean pressed) {
-            this.rightPressed = pressed;
-        }
-
-        public void setUpPressed(boolean pressed) {
-            this.upPressed = pressed;
-        }
-
-        public void setDownPressed(boolean pressed) {
-            this.downPressed = pressed;
-        }
-
-        public void startDrift() {
-            isDrifting = true;
-        }
-
-        public void stopDrift() {
-            isDrifting = false;
-        }
-
         public void draw(SpriteBatch batch) {
             Color originalColor = batch.getColor();
             batch.setColor(tint);
             float originX = img.getWidth() / 2f;
             float originY = img.getHeight() / 2f;
             batch.draw(img, x - originX, y - originY, originX, originY, img.getWidth(), img.getHeight(), 1, 1, rotation, 0, 0, img.getWidth(), img.getHeight(), false, false);
-            font.draw(batch, speedText, 10, 10);
+            font.draw(batch, String.format("Speed : %.2g", speed), 10, 10);
             batch.setColor(originalColor);
 
         }
 
+        private final List<PlayerObserver> observers = new ArrayList<>();
 
+        public void addObserver(PlayerObserver observer) {
+            observers.add(observer);
+        }
+
+        public void removeObserver(PlayerObserver observer) {
+            observers.remove(observer);
+        }
+
+        private void notifyObservers(float oldX , float oldY,float newX, float newY) {
+            for (PlayerObserver observer : observers) {
+                observer.onPlayerPositionChanged(oldX,oldY,newX, newY);
+            }
+        }
     }

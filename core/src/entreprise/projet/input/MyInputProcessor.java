@@ -1,8 +1,10 @@
-package entreprise.projet;
+package entreprise.projet.input;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
+import entreprise.projet.entities.Map;
+import entreprise.projet.entities.Player;
 
 public class MyInputProcessor implements InputProcessor {
     private Player car1;
