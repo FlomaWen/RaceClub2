@@ -22,7 +22,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	};
 	static final int[][] carInputs = new int[][]{
 			{Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.CONTROL_RIGHT},
-			{Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.CONTROL_RIGHT}
+			{Input.Keys.Q, Input.Keys.D, Input.Keys.Z, Input.Keys.S, Input.Keys.SHIFT_LEFT}
 	};
 
 	Player [] cars;
@@ -53,7 +53,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		backgroundTexture = new Texture("map.png");
-		Gdx.input.setInputProcessor(new MyInputProcessor(car1,car2,map));
+		Gdx.input.setInputProcessor(new MyInputProcessor(cars[0], cars[1],map));
 
 		}
 
@@ -71,8 +71,9 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 
 			// Display the points on the screen
-			font.draw(batch, "Car 1 Points: " + car1.getPoints(), 10, 460); // Show Car 1 points
-			font.draw(batch, "Car 2 Points: " + car2.getPoints(), 10, 440); // Show Car 2 points
+			for(int i = 0; i < cars.length; i++) {
+				font.draw(batch, "Car " + (i+1) + " Points: " + cars[i].getPoints(), 10, 460 - i * 20);
+			}
 
 			batch.end();
 	}
@@ -81,8 +82,9 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void dispose() {
 		batch.dispose();
 		font.dispose();
-		car1.img.dispose();
-		car2.img.dispose();
+		for(Player car : cars) {
+			car.img.dispose();
+		}
 		backgroundTexture.dispose();
 		map.dispose();
 	}

@@ -13,7 +13,6 @@
         public Texture img;
         private float x, y, speedX, speedY, rotation, acceleration, maxSpeed, rotationSpeed, speed;
         private Map map;
-        //private boolean upPressed = false, downPressed = false, leftPressed = false, rightPressed = false,isMoving,isDrifting;
         private boolean isMoving = false;
         private InputController inputCtrl;
         private BitmapFont font = new BitmapFont();
@@ -36,6 +35,8 @@
         }
 
         public void update(float delta) {
+            float oldX = x;
+            float oldY = y;
             updateSpeed(delta);
 
             float rad = (float) Math.toRadians(rotation);
@@ -62,7 +63,7 @@
                 x = newX;
                 y = newY;
 
-                notifyObservers(x, y);
+                notifyObservers(oldX,oldY,x, y);
             } else {
                 speed = 0;
                 isMoving = false;

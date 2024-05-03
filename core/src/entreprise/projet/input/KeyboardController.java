@@ -21,21 +21,21 @@ public class KeyboardController implements InputController{
 
     @Override
     public boolean isLeftPressed() {
-        return false;
+        return Gdx.input.isKeyPressed(this.keys[LEFT]);
     }
 
     @Override
     public boolean isRightPressed() {
-        return false;
+        return Gdx.input.isKeyPressed(this.keys[RIGHT]);
     }
 
     @Override
     public boolean isUpPressed() {
-        return false;
+        return Gdx.input.isKeyPressed(this.keys[UP]);
     }
 
     @Override
     public boolean isDownPressed() {
-        return false;
+        return Gdx.input.isKeyPressed(this.keys[DOWN]);
     }
 }

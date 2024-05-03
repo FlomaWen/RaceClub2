@@ -19,95 +19,15 @@ public class MyInputProcessor implements InputProcessor {
     }
 
 
-    public boolean resetGame(int keycode){
-        if (keycode == Input.Keys.R){
-            car1 = new Player(map,550,950,"voituretest.png", Color.WHITE);
-            car2 = new Player(map,550,925,"voituretest.png", Color.YELLOW);
-        }
-        return true;
-    }
-
-
-
     @Override
-    public boolean keyDown(int keycode) {
-        switch (keycode) {
-            case Input.Keys.LEFT:
-                car1.setLeftPressed(true);
-                break;
-            case Input.Keys.RIGHT:
-                car1.setRightPressed(true);
-                break;
-            case Input.Keys.UP:
-                car1.setUpPressed(true);
-                break;
-            case Input.Keys.DOWN:
-                car1.setDownPressed(true);
-                break;
-            case Input.Keys.CONTROL_RIGHT:
-                car1.startDrift();
-                break;
-            case Input.Keys.A:
-                car2.setLeftPressed(true);
-                break;
-            case Input.Keys.D:
-                car2.setRightPressed(true);
-                break;
-            case Input.Keys.W:
-                car2.setUpPressed(true);
-                break;
-            case Input.Keys.S:
-                car2.setDownPressed(true);
-                break;
-            case Input.Keys.SHIFT_LEFT:
-                car2.startDrift();
-                break;
-        }
-        return true;
+    public boolean keyDown(int i) {
+        return false;
     }
 
     @Override
-    public boolean keyUp(int keycode) {
-        switch (keycode) {
-            case Input.Keys.LEFT:
-                car1.setLeftPressed(false);
-                break;
-            case Input.Keys.RIGHT:
-                car1.setRightPressed(false);
-                break;
-            case Input.Keys.UP:
-                car1.setUpPressed(false);
-                break;
-            case Input.Keys.DOWN:
-                car1.setDownPressed(false);
-                break;
-            case Input.Keys.CONTROL_RIGHT:
-                car1.stopDrift();
-                break;
-            case Input.Keys.A:
-                car2.setLeftPressed(false);
-                break;
-            case Input.Keys.D:
-                car2.setRightPressed(false);
-                break;
-            case Input.Keys.W:
-                car2.setUpPressed(false);
-                break;
-            case Input.Keys.S:
-                car2.setDownPressed(false);
-                break;
-            case Input.Keys.SHIFT_LEFT:
-                car2.stopDrift();
-                break;
-
-        }
-        return true;
+    public boolean keyUp(int i) {
+        return false;
     }
-
-
-
-
-
 
     @Override
     public boolean keyTyped(char c) {
