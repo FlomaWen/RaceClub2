@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import entreprise.projet.entities.Map;
 import entreprise.projet.entities.Player;
+import entreprise.projet.gdx.PlayerGdx;
 import entreprise.projet.input.KeyboardController;
 import entreprise.projet.input.MyInputProcessor;
 
@@ -21,13 +22,11 @@ public class MyGdxGame extends ApplicationAdapter {
 			Color.YELLOW
 	};
 	static final int[][] carInputs = new int[][]{
-			{Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.CONTROL_RIGHT},
-			{Input.Keys.Q, Input.Keys.D, Input.Keys.Z, Input.Keys.S, Input.Keys.SHIFT_LEFT}
+			{Input.Keys.CONTROL_RIGHT, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.DOWN},
+			{Input.Keys.SHIFT_LEFT, Input.Keys.Q, Input.Keys.D, Input.Keys.Z, Input.Keys.S}
 	};
 
-	Player [] cars;
-	Player car2;
-	Texture background;
+	PlayerGdx [] cars;
 	Texture backgroundTexture;
 	Map map;
 	BitmapFont font;
@@ -41,19 +40,19 @@ public class MyGdxGame extends ApplicationAdapter {
 		font = new BitmapFont();
 		font.setColor(Color.WHITE);
 		map = new Map("map.png");
-		cars = new Player[carColors.length];
+		cars = new PlayerGdx[carColors.length];
 		for(int i =0; i<cars.length; i++) {
-			cars[i] = new Player(
-					map,
-					new KeyboardController(carInputs[i]),
-					550,925+25*i,
-					"voituretest.png",
-					carColors[i]
+			cars[i] = new PlayerGdx(
+					new Player(
+						map,
+						new KeyboardController(carInputs[i]),
+						550,925+25*i
+					), carColors[i]
 			);
 		}
 
 		backgroundTexture = new Texture("map.png");
-		Gdx.input.setInputProcessor(new MyInputProcessor(cars[0], cars[1],map));
+		Gdx.input.setInputProcessor(new MyInputProcessor(cars[0].getPlayer(), cars[1].getPlayer(),map));
 
 		}
 
@@ -65,14 +64,14 @@ public class MyGdxGame extends ApplicationAdapter {
 			batch.begin();
 
 			batch.draw(backgroundTexture, 0, 0);
-			for(Player c : cars) {
-				c.update(delta);
+			for(PlayerGdx c : cars) {
+				c.getPlayer().update(delta);
 				c.draw(batch);
 			}
 
 			// Display the points on the screen
 			for(int i = 0; i < cars.length; i++) {
-				font.draw(batch, "Car " + (i+1) + " Points: " + cars[i].getPoints(), 10, 460 - i * 20);
+				font.draw(batch, "Car " + (i+1) + " Points: " + cars[i].getPlayer().getPoints(), 10, 460 - i * 20);
 			}
 
 			batch.end();
@@ -82,8 +81,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void dispose() {
 		batch.dispose();
 		font.dispose();
-		for(Player car : cars) {
-			car.img.dispose();
+		for(PlayerGdx car : cars) {
+			car.dispose();
 		}
 		backgroundTexture.dispose();
 		map.dispose();

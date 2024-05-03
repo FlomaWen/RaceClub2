@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
-public class Map {
+public class Map implements Drivable {
 
     private boolean[][] walkable;
     private Pixmap pixmap;
@@ -65,8 +65,8 @@ public class Map {
     private final static float LAP_HEIGHT = 100f;
 
 
-
-    public int isLapComplete(float x0, float y0, float x, float y) {
+    @Override
+    public int getLapState(float x0, float y0, float x, float y) {
         float avgy = (y+y0)/2f;
         if(STARTY < avgy && avgy < STARTY+LAP_HEIGHT && STARTX-x > 0 && STARTX-x0 <=0) {
             return 1;
@@ -77,8 +77,8 @@ public class Map {
         }
     }
 
-
-    public boolean isWalkable(int x, int y) {
+    @Override
+    public boolean isDrivable(int x, int y) {
         return x >= 0 && y >= 0 && x < walkable.length && y < walkable[0].length && walkable[x][pixmap.getHeight() - 1 - y];
     }
 

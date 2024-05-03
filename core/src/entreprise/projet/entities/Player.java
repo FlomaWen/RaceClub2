@@ -1,35 +1,34 @@
     package entreprise.projet.entities;
 
-    import com.badlogic.gdx.graphics.Texture;
-    import com.badlogic.gdx.graphics.g2d.BitmapFont;
-    import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-    import com.badlogic.gdx.graphics.Color;
     import entreprise.projet.input.InputController;
 
     import java.util.ArrayList;
     import java.util.List;
 
     public class Player {
-        public Texture img;
-        private float x, y, speedX, speedY, rotation, acceleration, maxSpeed, rotationSpeed, speed;
-        private Map map;
-        private boolean isMoving = false;
-        private InputController inputCtrl;
-        private BitmapFont font = new BitmapFont();
-        private float driftFactor = 0.75f;
-        private Color tint;
+        private final static float DRIFT_FACTOR = 0.75f;
+        private final static float MAX_SPEED = 300;
+        private final static float MAX_ACCELERATION = MAX_SPEED/1.5f;
+        
+        private float x;
+        private float y;
+        private float speedX;
+        private float speedY;
+        private float rotation;
+        private float rotationSpeed;
+        private float speed;
+        private final Drivable map;
+        private final InputController inputCtrl;
+
+
         private int points;
 
-        public Player(Map map, InputController inputCtrl, float startX, float startY, String texturePath, Color tint) {
-            img = new Texture("voituretest.png");
+        public Player(Drivable map, InputController inputCtrl, float startX, float startY ) {
             x = startX;
             y = startY;
             rotation = 270;
             this.inputCtrl = inputCtrl;
             this.map = map;
-            this.tint = tint;
-            maxSpeed = 300;
-            acceleration = maxSpeed / 1.5f;
             rotationSpeed = 5;
             speed = 0;
         }
@@ -44,8 +43,8 @@
             float driftSpeedY = speed * (float) Math.sin(rad - Math.PI / 2);
 
             if (inputCtrl.isDriftPressed()) {
-                speedX = speedX * driftFactor + driftSpeedX * (1 - driftFactor);
-                speedY = speedY * driftFactor + driftSpeedY * (1 - driftFactor);
+                speedX = speedX * DRIFT_FACTOR + driftSpeedX * (1 - DRIFT_FACTOR);
+                speedY = speedY * DRIFT_FACTOR + driftSpeedY * (1 - DRIFT_FACTOR);
             } else {
                 speedX = driftSpeedX;
                 speedY = driftSpeedY;
@@ -54,10 +53,10 @@
             float newX = x + speedX * delta;
             float newY = y + speedY * delta;
 
-            if (map.isWalkable((int) newX, (int) newY)) {
-                if(map.isLapComplete(x, y, newX, newY) == 1) {
+            if (map.isDrivable((int) newX, (int) newY)) {
+                if(map.getLapState(x, y, newX, newY) == 1) {
                     points++;
-                } else if (map.isLapComplete(x, y, newX, newY) == -1) {
+                } else if (map.getLapState(x, y, newX, newY) == -1) {
                     points--;
                 }
                 x = newX;
@@ -66,7 +65,6 @@
                 notifyObservers(oldX,oldY,x, y);
             } else {
                 speed = 0;
-                isMoving = false;
             }
 
         }
@@ -75,8 +73,16 @@
             return points;
         }
 
+        public float getX() {
+            return x;
+        }
 
-
+        public float getY() {
+            return y;
+        }
+        public float getRotation() {
+            return rotation;
+        }
 
 
         private float normalizeAngle(float angle) {
@@ -99,23 +105,17 @@
                 dy /= length;
             }
 
-            float targetSpeedX = dx * maxSpeed;
-            float targetSpeedY = dy * maxSpeed;
+            float targetSpeedX = dx * MAX_SPEED;
+            float targetSpeedY = dy * MAX_SPEED;
 
-            speedX = approach(speedX, targetSpeedX, acceleration * delta);
-            speedY = approach(speedY, targetSpeedY, acceleration * delta);
+            speedX = approach(speedX, targetSpeedX, MAX_ACCELERATION * delta);
+            speedY = approach(speedY, targetSpeedY, MAX_ACCELERATION * delta);
 
             speed = (float) Math.sqrt(speedX * speedX + speedY * speedY);
             if (speed > 0) {
-                rotation = (float) Math.toDegrees(Math.atan2(speedY, speedX)) + 90;
-                rotation = normalizeAngle(rotation);
-                isMoving = true;
-            } else {
-                isMoving = false;
-            }
-            if (speed > 0) {
                 float targetRotation = (float) Math.toDegrees(Math.atan2(speedY, speedX)) + 90;
 
+                rotation = normalizeAngle(targetRotation);
                 if (inputCtrl.isDriftPressed()) {
                     rotationSpeed = 15;
                     if (inputCtrl.isLeftPressed()) {
@@ -131,14 +131,13 @@
                 if (rotationDifference > 180) {
                     rotationDifference -= 360;
                 }
-
                 rotation += rotationDifference * rotationSpeed * delta;
                 rotation = normalizeAngle(rotation);
-            } else {
-                isMoving = false;
             }
+        }
 
-
+        public float getSpeed() {
+            return this.speed;
         }
 
         private float approach(float current, float target, float maxChange) {
@@ -146,17 +145,6 @@
             if (change > maxChange) change = maxChange;
             else if (change < -maxChange) change = -maxChange;
             return current + change;
-        }
-
-        public void draw(SpriteBatch batch) {
-            Color originalColor = batch.getColor();
-            batch.setColor(tint);
-            float originX = img.getWidth() / 2f;
-            float originY = img.getHeight() / 2f;
-            batch.draw(img, x - originX, y - originY, originX, originY, img.getWidth(), img.getHeight(), 1, 1, rotation, 0, 0, img.getWidth(), img.getHeight(), false, false);
-            font.draw(batch, String.format("Speed : %.2g", speed), 10, 10);
-            batch.setColor(originalColor);
-
         }
 
         private final List<PlayerObserver> observers = new ArrayList<>();
