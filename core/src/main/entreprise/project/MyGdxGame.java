@@ -1,4 +1,4 @@
-package entreprise.projet;
+package entreprise.project;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -8,11 +8,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import entreprise.projet.entities.Map;
-import entreprise.projet.entities.Player;
-import entreprise.projet.gdx.PlayerGdx;
-import entreprise.projet.input.KeyboardController;
-import entreprise.projet.input.MyInputProcessor;
+import entreprise.project.entities.Map;
+import entreprise.project.entities.Player;
+import entreprise.project.input.KeyboardController;
+import entreprise.project.input.MyInputProcessor;
+import entreprise.project.gdx.PlayerGdx;
+
 
 
 public class MyGdxGame extends ApplicationAdapter {
@@ -26,7 +27,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			{Input.Keys.SHIFT_LEFT, Input.Keys.Q, Input.Keys.D, Input.Keys.Z, Input.Keys.S}
 	};
 
-	PlayerGdx [] cars;
+	PlayerGdx[] cars;
 	Texture backgroundTexture;
 	Map map;
 	BitmapFont font;

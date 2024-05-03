@@ -1,4 +1,4 @@
-package entreprise.projet.input;
+package entreprise.project.input;
 
 public interface InputController {
     boolean isDriftPressed();

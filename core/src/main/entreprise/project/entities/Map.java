@@ -1,4 +1,4 @@
-package entreprise.projet.entities;
+package entreprise.project.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

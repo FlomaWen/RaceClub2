@@ -1,6 +1,6 @@
-    package entreprise.projet.entities;
+    package entreprise.project.entities;
 
-    import entreprise.projet.input.InputController;
+    import entreprise.project.input.InputController;
 
     import java.util.ArrayList;
     import java.util.List;
@@ -9,7 +9,11 @@
         private final static float DRIFT_FACTOR = 0.75f;
         private final static float MAX_SPEED = 300;
         private final static float MAX_ACCELERATION = MAX_SPEED/1.5f;
-        
+//PUBLIC??
+        public final Drivable map;
+//PUBLIC??
+        public final InputController inputCtrl;
+
         private float x;
         private float y;
         private float speedX;
@@ -17,10 +21,6 @@
         private float rotation;
         private float rotationSpeed;
         private float speed;
-        private final Drivable map;
-        private final InputController inputCtrl;
-
-
         private int points;
 
         public Player(Drivable map, InputController inputCtrl, float startX, float startY ) {
@@ -31,6 +31,26 @@
             this.map = map;
             rotationSpeed = 5;
             speed = 0;
+        }
+
+
+        public int getPoints() {
+            return points;
+        }
+
+        public float getX() {
+            return x;
+        }
+
+        public float getY() {
+            return y;
+        }
+        public float getRotation() {
+            return rotation;
+        }
+
+        public float getSpeed() {
+            return this.speed;
         }
 
         public void update(float delta) {
@@ -68,23 +88,6 @@
             }
 
         }
-
-        public int getPoints() {
-            return points;
-        }
-
-        public float getX() {
-            return x;
-        }
-
-        public float getY() {
-            return y;
-        }
-        public float getRotation() {
-            return rotation;
-        }
-
-
         private float normalizeAngle(float angle) {
             while (angle < 0) angle += 360;
             while (angle >= 360) angle -= 360;
@@ -136,9 +139,6 @@
             }
         }
 
-        public float getSpeed() {
-            return this.speed;
-        }
 
         private float approach(float current, float target, float maxChange) {
             float change = target - current;

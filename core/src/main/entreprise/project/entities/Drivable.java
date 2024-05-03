@@ -1,4 +1,4 @@
-package entreprise.projet.entities;
+package entreprise.project.entities;
 
 public interface Drivable {
     boolean isDrivable(int newX, int newY);
