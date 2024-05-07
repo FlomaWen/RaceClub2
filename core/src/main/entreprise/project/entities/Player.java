@@ -19,6 +19,7 @@
         private float rotationSpeed;
         private float speed;
         private int points;
+        private boolean hasCrossedFinishLine = false;
 
         public Player(Drivable map, InputController inputCtrl, float startX, float startY ) {
             if (map == null) {
@@ -27,11 +28,11 @@
             if (inputCtrl == null) {
                 throw new NullPointerException("InputController cannot be null.");
             }
-            x = startX;
-            y = startY;
-            rotation = 270;
+            this.x = startX;
+            this.y = startY;
             this.inputCtrl = inputCtrl;
             this.map = map;
+            rotation = 270;
             rotationSpeed = 5;
             speed = 0;
         }
@@ -77,15 +78,21 @@
             float newY = y + speedY * delta;
 
             if (map.isDrivable((int) newX, (int) newY)) {
-                if(map.getLapState(x, y, newX, newY) == 1) {
-                    points++;
-                } else if (map.getLapState(x, y, newX, newY) == -1) {
+                int lapState = map.getLapState(x, y, newX, newY);
+                if (lapState == 1) {
+                    if (hasCrossedFinishLine) {
+                        points++;
+                    } else {
+                        hasCrossedFinishLine = true;
+                    }
+                } else if (lapState == -1) {
                     points--;
                 }
+
                 x = newX;
                 y = newY;
 
-                notifyObservers(oldX,oldY,x, y);
+                notifyObservers(oldX, oldY, x, y);
             } else {
                 speed = 0;
             }
