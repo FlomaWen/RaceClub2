@@ -6,9 +6,16 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Map implements Drivable {
+    public final static int GRASS = 0x25cb0d;
 
-    private boolean[][] walkable;
-    private Pixmap pixmap;
+    public final static int WALL = 0xbdbebd;
+
+    public final static int KERBS0 = 0xffffff;
+    public final static int KERBS1 = 0xff0000;
+
+
+    private final boolean[][] walkable;
+    private final Pixmap pixmap;
 
     public Map(String texturePath) {
         Texture texture = new Texture(Gdx.files.internal(texturePath));
@@ -21,43 +28,20 @@ public class Map implements Drivable {
         for (int x = 0; x < pixmap.getWidth(); x++) {
             for (int y = 0; y < pixmap.getHeight(); y++) {
                 int pixel = pixmap.getPixel(x, y);
-                walkable[x][y] = !isGreen(pixel) && !isGray(pixel);
+                walkable[x][y] = !isColor(pixel, GRASS)
+                              && !isColor(pixel, WALL);
             }
         }
         texture.dispose();
     }
 
-    private boolean isGreen(int pixel) {
 
+    private static boolean isColor(int pixel, int compareTo){
         Color color = new Color(pixel);
-        float redGreen = 37 / 255f;
-        float greenGreen = 203 / 255f;
-        float blueGreen = 13 / 255f;
-        return color.r == redGreen && color.g == greenGreen && color.b == blueGreen && color.a == 1;
-    }
-
-    private boolean isGray(int pixel){
-        Color color = new Color(pixel);
-        float redGray = 189/255f;
-        float greenGray = 190/255f;
-        float blueGray = 189/255f;
-        return color.r == redGray && color.g == greenGray && color.b == blueGray && color.a == 1;
-    }
-
-    private boolean isWhite(int pixel){
-        Color color = new Color(pixel);
-        float red = 1;
-        float green = 1;
-        float blue = 1;
-        return color.r == red && color.g == green && color.b == blue && color.a == 1;
-    }
-
-    private boolean isRed(int pixel){
-        Color color = new Color(pixel);
-        float red = 1;
-        float green = 0;
-        float blue = 0;
-        return color.r == red && color.g == green && color.b == blue && color.a == 1;
+        float r = ((compareTo >> 16) & 0xff)/255f;
+        float g = ((compareTo >>  8) & 0xff)/255f;
+        float b = (compareTo & 0xff)/255f;
+        return color.r == r && color.g == g && color.b == b && color.a == 1;
     }
 
     private final static float STARTX = 495f;
@@ -82,18 +66,15 @@ public class Map implements Drivable {
         return x >= 0 && y >= 0 && x < walkable.length && y < walkable[0].length && walkable[x][pixmap.getHeight() - 1 - y];
     }
 
-    public boolean isWhite(int x, int y) {
-        return x >= 0 && y >= 0 && x < pixmap.getWidth() && y < pixmap.getHeight() && isWhite(pixmap.getPixel(x, pixmap.getHeight() - 1 - y));
-    }
-
-    public boolean isRed(int x, int y) {
-        return x >= 0 && y >= 0 && x < pixmap.getWidth() && y < pixmap.getHeight() && isRed(pixmap.getPixel(x, pixmap.getHeight() - 1 - y));
+    public boolean isKerb(int x, int y) {
+        int pixel = pixmap.getPixel(x, pixmap.getHeight() - 1 - y);
+        return x >= 0 && y >= 0 && x < pixmap.getWidth() && y < pixmap.getHeight()
+                && (isColor(pixel, KERBS0) || isColor(pixel, KERBS1));
     }
 
     public void dispose() {
         pixmap.dispose();
     }
-
 
     // player observer a utiliser
 

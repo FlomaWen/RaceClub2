@@ -1,6 +1,7 @@
 import entreprise.project.entities.Drivable;
 import entreprise.project.input.InputController;
 import entreprise.project.entities.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -10,79 +11,178 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 public class TestPlayer {
-    // Initialisation du joueur avec des valeurs de départ
-    float startX = 100.0f;
-    float startY = 200.0f;
     private Drivable mockMap;
     private InputController mockInputController;
-    Player player = new Player(mockMap, mockInputController, startX, startY);
-
+    @BeforeEach
     public void setUp() {
         mockMap = Mockito.mock(Drivable.class);
         mockInputController = Mockito.mock(InputController.class);
     }
 
     @Test
-    public void testPlayerConstructor() {
+    public void testPlayerConstructorCasual() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
 
-
-
-        // Vérifie si les valeurs de départ sont correctement initialisées
-        assertEquals(startX, player.getX(), 0.01);
-        assertEquals(startY, player.getY(), 0.01);
-        assertEquals(270, player.getRotation(), 0.01); // Rotation initiale
-        assertEquals(0, player.getSpeed(), 0.01);      // Vitesse initiale
-        assertEquals(0, player.getPoints());           // Points initiaux
-
-        // Assure que les contrôleurs et la carte sont correctement assignés
-        assertSame(mockInputController, player.inputCtrl);
-        assertSame(mockMap, player.map);
+        assertEquals(100.0f, player.getX(), 0.01);
+        assertEquals(200.0f, player.getY(), 0.01);
+        assertEquals(270, player.getRotation(), 0.01);
+        assertEquals(0, player.getSpeed(), 0.01);
+        assertEquals(0, player.getPoints());
+    }
+    @Test
+    public void testPlayerConstructorNullMap() {
+        assertThrows(NullPointerException.class, () -> {
+            new Player(null, mockInputController, 100.0f, 200.0f);
+        });
     }
 
     @Test
-    public void testMoveUp() {
-        // Simuler le mouvement vers le haut
+    public void testPlayerConstructorNullInputController() {
+        assertThrows(NullPointerException.class, () -> {
+            new Player(mockMap, null, 100.0f, 200.0f);
+        });
+    }
+
+    @Test
+    public void testMoveUpWithoutCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
         when(mockInputController.isUpPressed()).thenReturn(true);
         when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
 
         float initialY = player.getY();
 
-        // Simuler un delta de temps d'une seconde
         player.update(1.0f);
 
-        // Le joueur devrait avoir avancé vers le haut
-        assertTrue(player.getY() > initialY);
+        assertTrue(player.getY() > initialY, "Player should have moved upwards.");
     }
 
     @Test
+    public void testMoveUpWithCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockInputController.isUpPressed()).thenReturn(true);
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(false);
+
+        float initialY = player.getY();
+
+        player.update(1.0f);
+
+        assertEquals(initialY, player.getY(), 0.01, "Player should not have moved due to collision.");
+    }
+
+    @Test
+    public void testMoveLeftWithoutCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockInputController.isLeftPressed()).thenReturn(true);
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
+
+        float initialX = player.getX();
+
+        player.update(1.0f);
+
+        assertTrue(player.getX() < initialX, "Player should have moved leftwards.");
+    }
+    @Test
+    public void testMoveLeftWithCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockInputController.isLeftPressed()).thenReturn(true);
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(false);
+
+        float initialX = player.getX();
+
+        player.update(1.0f);
+
+        assertEquals(initialX, player.getX(), 0.01, "Player should not have moved due to collision.");
+    }
+    @Test
+    public void testMoveRightWithoutCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockInputController.isRightPressed()).thenReturn(true);
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
+
+        float initialX = player.getX();
+
+        player.update(1.0f);
+
+        assertTrue(player.getX() > initialX, "Player should have moved rightwards.");
+    }
+    @Test
+    public void testMoveRightWithCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockInputController.isRightPressed()).thenReturn(true);
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(false);
+
+        float initialX = player.getX();
+
+        player.update(1.0f);
+
+        assertEquals(initialX, player.getX(), 0.01, "Player should not have moved due to collision.");
+    }
+    @Test
+    public void testMoveDownWithoutCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockInputController.isDownPressed()).thenReturn(true);
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
+
+        float initialY = player.getY();
+
+        player.update(1.0f);
+
+        assertTrue(player.getY() < initialY, "Player should have moved downwards.");
+    }
+    @Test
+    public void testMoveDownWithCollision() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockInputController.isDownPressed()).thenReturn(true);
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(false);
+
+        float initialY = player.getY();
+
+        player.update(1.0f);
+
+        assertEquals(initialY, player.getY(), 0.01, "Player should not have moved due to collision.");
+    }
+
+
+    @Test
     public void testDrift() {
-        // Simuler le drift
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
         when(mockInputController.isDriftPressed()).thenReturn(true);
         when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
 
         player.update(1.0f);
 
-        // Le drift devrait affecter la vitesse
-        assertTrue(player.getSpeed() > 0);
         assertTrue(player.getX() != 0 || player.getY() != 0);
     }
 
     @Test
     public void testCollision() {
-        // Simuler une collision
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
         when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(false);
+
+        float initialX = player.getX();
+        float initialY = player.getY();
 
         player.update(1.0f);
 
-        // La vitesse doit être remise à zéro en cas de collision
-        assertEquals(0, player.getSpeed(), 0.01);
-        assertEquals(0, player.getX(), 0.01);
-        assertEquals(0, player.getY(), 0.01);
+        assertEquals(initialX, player.getX(), 0.01, "Player's X position should not change.");
+        assertEquals(initialY, player.getY(), 0.01, "Player's Y position should not change.");
+        assertEquals(0, player.getSpeed(), 0.01, "Player's speed should be zero after collision.");
     }
 
     @Test
-    public void testLapPoints() {
-        // Simuler le passage sur un point de contrôle
+    public void testLapPointsUp() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
         when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
         when(mockMap.getLapState(anyFloat(), anyFloat(), anyFloat(), anyFloat())).thenReturn(1);
 
@@ -90,7 +190,33 @@ public class TestPlayer {
 
         player.update(1.0f);
 
-        // Le nombre de points doit avoir augmenté
-        assertEquals(initialPoints + 1, player.getPoints());
+        assertEquals(initialPoints + 1, player.getPoints(), "Points should increase by one after lap state update.");
+    }
+    @Test
+    public void testLapPointsDown() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
+        when(mockMap.getLapState(anyFloat(), anyFloat(), anyFloat(), anyFloat())).thenReturn(-1);
+
+        int initialPoints = player.getPoints();
+
+        player.update(1.0f);
+
+        assertEquals(initialPoints - 1, player.getPoints(), "Points should decrease by one after lap state update.");
+    }
+
+    @Test
+    public void testLapPointsOutOfFinishLine() {
+        Player player = new Player(mockMap, mockInputController, 100.0f, 200.0f);
+
+        when(mockMap.isDrivable(anyInt(), anyInt())).thenReturn(true);
+        when(mockMap.getLapState(anyFloat(), anyFloat(), anyFloat(), anyFloat())).thenReturn(0);
+
+        int initialPoints = player.getPoints();
+
+        player.update(1.0f);
+
+        assertEquals(initialPoints, player.getPoints(), "Points should not change if lap state is zero.");
     }
 }

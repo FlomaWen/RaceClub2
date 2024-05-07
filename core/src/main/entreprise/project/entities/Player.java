@@ -9,11 +9,8 @@
         private final static float DRIFT_FACTOR = 0.75f;
         private final static float MAX_SPEED = 300;
         private final static float MAX_ACCELERATION = MAX_SPEED/1.5f;
-//PUBLIC??
-        public final Drivable map;
-//PUBLIC??
-        public final InputController inputCtrl;
-
+        private final Drivable map;
+        private final InputController inputCtrl;
         private float x;
         private float y;
         private float speedX;
@@ -24,6 +21,12 @@
         private int points;
 
         public Player(Drivable map, InputController inputCtrl, float startX, float startY ) {
+            if (map == null) {
+                throw new NullPointerException("Map cannot be null.");
+            }
+            if (inputCtrl == null) {
+                throw new NullPointerException("InputController cannot be null.");
+            }
             x = startX;
             y = startY;
             rotation = 270;
@@ -88,12 +91,6 @@
             }
 
         }
-        private float normalizeAngle(float angle) {
-            while (angle < 0) angle += 360;
-            while (angle >= 360) angle -= 360;
-            return angle;
-        }
-
 
         private void updateSpeed(float delta) {
             float dx = 0, dy = 0;
@@ -139,6 +136,11 @@
             }
         }
 
+        private float normalizeAngle(float angle) {
+            while (angle < 0) angle += 360;
+            while (angle >= 360) angle -= 360;
+            return angle;
+        }
 
         private float approach(float current, float target, float maxChange) {
             float change = target - current;
